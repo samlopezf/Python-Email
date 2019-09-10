@@ -4,9 +4,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-email_user = 'your_email'
-email_password = 'your_password'
-email_send = 'recipient_email'
+email_user = 'your_email'        #Enter sender's mail.
+email_password = 'your_password' #Enter sender's mail email_password
+email_send = 'recipient_email'   #Enter reveiver's email.
 
 subject = 'subject'
 
@@ -19,19 +19,31 @@ body = 'Hi there, sending this email from Python!'
 msg.attach(MIMEText(body,'plain'))
 
 filename='filename'
-attachment  =open(filename,'rb')
 
-part = MIMEBase('application','octet-stream')
-part.set_payload((attachment).read())
-encoders.encode_base64(part)
-part.add_header('Content-Disposition',"attachment; filename= "+filename)
+try:
+  attachment  =open(filename,'rb')
+  part = MIMEBase('application','octet-stream')
+  part.set_payload((attachment).read())
+  encoders.encode_base64(part)
+  part.add_header('Content-Disposition',"attachment; filename= "+filename)
 
-msg.attach(part)
-text = msg.as_string()
-server = smtplib.SMTP('smtp.gmail.com',587)
-server.starttls()
-server.login(email_user,email_password)
+  msg.attach(part)
+  text = msg.as_string()
 
+except Exception as p:
+  print(p)
 
-server.sendmail(email_user,email_send,text)
-server.quit()
+smtpServer = ["smtp.mail.yahoo.com", "smtp.gmail.com", "smtp.live.com"]
+smtpPort = [465, 587, 465]
+
+try:
+  server = smtplib.SMTP(smtpServer[1],smtpPort[1]) #Write the corresponding server from the above list.
+  server.starttls()
+  server.login(email_user,email_password)
+  server.sendmail(email_user,email_send,text)
+
+except Exception as e:
+  print(e)
+
+finally:
+  server.quit()
